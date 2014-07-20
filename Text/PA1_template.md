@@ -30,42 +30,74 @@ and include the number of steps taken in 5 minute intervals each day.
 ## Loading and preprocessing the data
 Let's start by loading the necessary libraries:
 
-```{r Load Required Libraries, echo = TRUE}
+
+```r
 library(ggplot2)
 library(lattice)
 library(knitr)
 ```
 
 #### 1. Load the data
-```{r Read Data, echo = TRUE}
 
+```r
 ## read the activity.csv source data
 activity <- read.csv("../data/activity.csv")
-
 ```
 
 #### 2. Process/transform the data (if necessary) into a format suitable for your analysis
 
 Execute a "head" command to review the first 10 rows of "activity" data
-```{r Head Data, echo = TRUE}
 
+```r
 head(activity, n = 10)
+```
 
+```
+##    steps       date interval
+## 1     NA 2012-10-01        0
+## 2     NA 2012-10-01        5
+## 3     NA 2012-10-01       10
+## 4     NA 2012-10-01       15
+## 5     NA 2012-10-01       20
+## 6     NA 2012-10-01       25
+## 7     NA 2012-10-01       30
+## 8     NA 2012-10-01       35
+## 9     NA 2012-10-01       40
+## 10    NA 2012-10-01       45
 ```
 
 Execute a "tail" command to get a view of the last 10 rows of "actvity" data
-```{r Tail Data, echo = TRUE}
 
+```r
 tail(activity, tail = 10)
+```
 
+```
+##       steps       date interval
+## 17563    NA 2012-11-30     2330
+## 17564    NA 2012-11-30     2335
+## 17565    NA 2012-11-30     2340
+## 17566    NA 2012-11-30     2345
+## 17567    NA 2012-11-30     2350
+## 17568    NA 2012-11-30     2355
 ```
 
 Execute a 'summary' command to get a view of the data elements and any missing
 values
-```{r Summary Data, echo = TRUE}
 
+```r
 summary(activity)
+```
 
+```
+##      steps               date          interval   
+##  Min.   :  0.0   2012-10-01:  288   Min.   :   0  
+##  1st Qu.:  0.0   2012-10-02:  288   1st Qu.: 589  
+##  Median :  0.0   2012-10-03:  288   Median :1178  
+##  Mean   : 37.4   2012-10-04:  288   Mean   :1178  
+##  3rd Qu.: 12.0   2012-10-05:  288   3rd Qu.:1766  
+##  Max.   :806.0   2012-10-06:  288   Max.   :2355  
+##  NA's   :2304    (Other)   :15840
 ```
 
 Given the number of missing data "NA", care must be exercised to deal with these
@@ -77,7 +109,8 @@ missing values in later assignment points.
 
 ### 1. Make a histogram of the total number of steps taken per day
 
-```{r Total Steps Histogram, echo = TRUE}
+
+```r
 #### Aggregate the total steps per day data
 steps <- with(activity,
               aggregate(steps,
@@ -100,20 +133,31 @@ with(steps,
           ylab = "Frequency (Number of Days)"
      )
 )
-
 ```
+
+![plot of chunk Total Steps Histogram](figure/Total Steps Histogram.png) 
 
 ### 2. Calculate and report the **mean** and **median** total number of steps taken per day
 
-```{r Mean and Median Total Steps, echo = TRUE}
+
+```r
 #### Mean of total steps (must ignore NA values)
 steps.mean <- mean(steps$Total.Steps, na.rm = TRUE)
 cat("Mean of Total Steps per Day is", steps.mean)
+```
 
+```
+## Mean of Total Steps per Day is 10766
+```
+
+```r
 #### Median of total steps (must ignore NA values)
 steps.median <- median(steps$Total.Steps, na.rm = TRUE)
 cat("Median of Total Steps per Day is", steps.median)
+```
 
+```
+## Median of Total Steps per Day is 10765
 ```
 
 
@@ -124,8 +168,8 @@ cat("Median of Total Steps per Day is", steps.median)
 
 #### 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r Time Series Plot, echo = TRUE}
 
+```r
 # Filter for only complete data ignoring the missing values Imputing Missing
 # Values is the next section of the assignment
 cleaned.activity <- activity[complete.cases(activity),]
@@ -145,24 +189,33 @@ ts.plot <- with(ts.plot.data,
                      y = Mean.Steps,
                      type = "l")
                 )
-
 ```
+
+![plot of chunk Time Series Plot](figure/Time Series Plot.png) 
 
 #### 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r Max Number of Mean Steps, echo = TRUE}
 
+```r
 max.mean <- subset(ts.plot.data, ts.plot.data$Mean.Steps == max(ts.plot.data$Mean.Steps))
 cat("The maximum mean steps is", min(max.mean[2]), "for 5-minute time interval", max(max.mean[1]))
+```
 
+```
+## The maximum mean steps is 206.2 for 5-minute time interval 835
 ```
 
 ## Imputing missing values
 
 #### 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r Total Number of Missing Value Rows, echo = TRUE}
+
+```r
 incomplete <- activity[!(complete.cases(activity)),]
 cat("Total number of rows with NAs in the 'activity' dataset:", nrow(incomplete))
+```
+
+```
+## Total number of rows with NAs in the 'activity' dataset: 2304
 ```
 
 #### 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
@@ -178,8 +231,8 @@ interval that corresponds to the NA value
 
 #### 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r Imputing Missing Values, echo = TRUE}
 
+```r
 # make a copy of activity without the missing data rows
 temp <- activity[!(is.na(activity$steps)),]
 
@@ -205,21 +258,30 @@ for(i in 1:nrow(tidy.activity)) { #
         }
     }
 }
-
 ```
 Verify missing values are now imputed by executing the 'summary' command on the
 "tidy.acvitity" dataset to ensure no NA values remain
 
-```{r Summary Imputed Dataset, echo = TRUE}
 
+```r
 summary(tidy.activity)
+```
 
+```
+##      steps               date          interval   
+##  Min.   :  0.0   2012-10-01:  288   Min.   :   0  
+##  1st Qu.:  0.0   2012-10-02:  288   1st Qu.: 589  
+##  Median :  0.0   2012-10-03:  288   Median :1178  
+##  Mean   : 37.4   2012-10-04:  288   Mean   :1178  
+##  3rd Qu.: 27.0   2012-10-05:  288   3rd Qu.:1766  
+##  Max.   :806.0   2012-10-06:  288   Max.   :2355  
+##                  (Other)   :15840
 ```
 
 #### 4a. Make a histogram of the total number of steps taken each day
 
-```{r tidy.activity Histogram, echo = TRUE}
 
+```r
 total.tidy.activity <- with(tidy.activity,
                             aggregate(steps,
                                       by = list(date),
@@ -237,19 +299,30 @@ with(total.tidy.activity,
           ylab = "Frequency (Number of Days)"
      )
 )
-
 ```
 
+![plot of chunk tidy.activity Histogram](figure/tidy.activity Histogram.png) 
+
 #### 4b. Calculate and report the mean and median total number of steps taken per day. 
-```{r Mean and Median Total "tidy.activity" Steps, echo = TRUE}
+
+```r
 #### Mean of total steps (must ignore NA values)
 steps.mean <- mean(total.tidy.activity$Total.Steps)
 cat("Mean of Total Steps per Day based on \"tidy.activity\" dataset is", steps.mean)
+```
 
+```
+## Mean of Total Steps per Day based on "tidy.activity" dataset is 10766
+```
+
+```r
 #### Median of total steps (must ignore NA values)
 steps.median <- median(total.tidy.activity$Total.Steps)
 cat("Median of Total Steps per Day based on \"tidy.activity\" dataset is", steps.median)
+```
 
+```
+## Median of Total Steps per Day based on "tidy.activity" dataset is 10766
 ```
 
 #### 4c. Do these values differ from the estimates from the first part of the assignment? 
@@ -265,19 +338,18 @@ Imputing missing values moved the median to the mean value.
 
 #### 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
-```{r Add Day.Type Factor, echo = TRUE}
 
+```r
 tidy.activity$Weekday <- weekdays(as.Date(tidy.activity$date))
 tidy.activity$Day.Type <- ifelse(weekdays(as.Date(tidy.activity$date)) %in% c("Saturday", "Sunday"), 
                                  "weekend", 
                                  "weekday")
-
 ```
 
 #### 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r Panel Plot for Day.Type, echo = TRUE}
 
+```r
 temp <- tidy.activity
 temp$Weekday <- weekdays(as.Date(temp$date))
 temp$Day.Type <- ifelse(weekdays(as.Date(temp$date)) %in% c("Saturday", "Sunday"), "weekend", "weekday")
@@ -294,6 +366,7 @@ xyplot(Mean.Steps ~ Interval | Day.Type,
        mean.5.day.type, 
        type = "l", 
        layout = c(1,2))
-
 ```
+
+![plot of chunk Panel Plot for Day.Type](figure/Panel Plot for Day.Type.png) 
 
